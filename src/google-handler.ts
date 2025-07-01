@@ -50,7 +50,7 @@ async function redirectToGoogle(
 		headers: {
 			...headers,
 			location: getUpstreamAuthorizeUrl({
-				clientId: c.env.GOOGLE_CLIENT_ID,
+				clientId: "305585167968-s5nia7bmd1oc373bik2k5tgrppnp9rp4.apps.googleusercontent.com",
 				hostedDomain: c.env.HOSTED_DOMAIN,
 				redirectUri: new URL("/callback", c.req.raw.url).href,
 				scope: "email profile",
@@ -84,8 +84,8 @@ app.get("/callback", async (c) => {
 	}
 
 	const [accessToken, googleErrResponse] = await fetchUpstreamAuthToken({
-		clientId: c.env.GOOGLE_CLIENT_ID,
-		clientSecret: c.env.GOOGLE_CLIENT_SECRET,
+		clientId: "305585167968-s5nia7bmd1oc373bik2k5tgrppnp9rp4.apps.googleusercontent.com",
+		clientSecret: "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",
 		code,
 		grantType: "authorization_code",
 		redirectUri: new URL("/callback", c.req.url).href,
