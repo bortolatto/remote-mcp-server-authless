@@ -1,6 +1,16 @@
-import { McpAgent } from "agents/mcp";
+import OAuthProvider from "@cloudflare/workers-oauth-provider";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpAgent } from "agents/mcp";
 import { z } from "zod";
+import { GoogleHandler } from "./google-handler";
+
+// Context from the auth process, encrypted & stored in the auth token
+// and provided to the MyMCP as this.props
+type Props = {
+	name: string;
+	email: string;
+	accessToken: string;
+};
 
 // Define our MCP agent with tools
 export class MyMCP extends McpAgent {
@@ -58,18 +68,11 @@ export class MyMCP extends McpAgent {
 	}
 }
 
-export default {
-	fetch(request: Request, env: Env, ctx: ExecutionContext) {
-		const url = new URL(request.url);
-
-		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
-			return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
-		}
-
-		if (url.pathname === "/mcp") {
-			return MyMCP.serve("/mcp").fetch(request, env, ctx);
-		}
-
-		return new Response("Not found", { status: 404 });
-	},
-};
+export default new OAuthProvider({
+	apiHandler: MyMCP.mount("/sse") as any,
+	apiRoute: "/sse",
+	authorizeEndpoint: "/authorize",
+	clientRegistrationEndpoint: "/register",
+	defaultHandler: GoogleHandler as any,
+	tokenEndpoint: "/token",
+});

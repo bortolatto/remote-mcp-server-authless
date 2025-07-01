@@ -22,7 +22,16 @@
 			}
 		]
 	},
+	"kv_namespaces": [
+		{
+			"binding": "OAUTH_KV",
+			"id": "baee45bc2bd24029a95f17e111005c33"
+		}
+  	],
 	"observability": {
 		"enabled": true
+	},
+	"dev": {
+		"port": 8788
 	}
 }
