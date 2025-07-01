@@ -48,3 +48,8 @@ Update with this configuration:
 ```
 
 Restart Claude and you should see the tools become available. 
+
+URLs para configuração da app no Google:
+
+- https://remote-mcp-server-authless.bortolattol.workers.dev
+- https://remote-mcp-server-authless.bortolattol.workers.dev/callback
