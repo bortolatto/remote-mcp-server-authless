@@ -17,7 +17,7 @@ app.get("/authorize", async (c) => {
 	}
 
 	if (
-		await clientIdAlreadyApproved(c.req.raw, oauthReqInfo.clientId, await c.env.OAUTH_KV.get('COOKIE_ENCRYPTION_KEY'))
+		await clientIdAlreadyApproved(c.req.raw, oauthReqInfo.clientId, (await c.env.OAUTH_KV.get('COOKIE_ENCRYPTION_KEY')) as string)
 	) {
 		return redirectToGoogle(c, oauthReqInfo);
 	}
@@ -33,7 +33,7 @@ app.get("/authorize", async (c) => {
 });
 
 app.post("/authorize", async (c) => {
-	const cookieSecret = await c.env.OAUTH_KV.get('COOKIE_ENCRYPTION_KEY');
+	const cookieSecret = (await c.env.OAUTH_KV.get('COOKIE_ENCRYPTION_KEY')) as string;
 	const { state, headers } = await parseRedirectApproval(c.req.raw, cookieSecret);
 	if (!state.oauthReqInfo) {
 		return c.text("Invalid request", 400);
@@ -51,7 +51,7 @@ async function redirectToGoogle(
 		headers: {
 			...headers,
 			location: getUpstreamAuthorizeUrl({
-				clientId: await c.env.OAUTH_KV.get('GOOGLE_CLIENT_ID'),
+				clientId: (await c.env.OAUTH_KV.get('GOOGLE_CLIENT_ID')) as string,
 				hostedDomain: c.env.HOSTED_DOMAIN,
 				redirectUri: new URL("/callback", c.req.raw.url).href,
 				scope: "email profile",
@@ -85,8 +85,8 @@ app.get("/callback", async (c) => {
 	}
 
 	const [accessToken, googleErrResponse] = await fetchUpstreamAuthToken({
-		clientId: await c.env.OAUTH_KV.get('GOOGLE_CLIENT_ID'),
-		clientSecret: await c.env.OAUTH_KV.get('GOOGLE_CLIENT_SECRET'),
+		clientId: (await c.env.OAUTH_KV.get('GOOGLE_CLIENT_ID')) as string,
+		clientSecret: (await c.env.OAUTH_KV.get('GOOGLE_CLIENT_SECRET')) as string,
 		code,
 		grantType: "authorization_code",
 		redirectUri: new URL("/callback", c.req.url).href,
